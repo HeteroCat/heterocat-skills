@@ -36,4 +36,4 @@
 欢迎贡献！如果你有新的技能想法或想要改进现有的技能，请随时提交 Pull Request。
 
 ---
-*由 HeteroCat 提供支持*
+*由 HeteroCat(Jasonhuang) 提供支持*
