@@ -1,32 +1,32 @@
-# HeteroCat Skills
+# HeteroCat 技能库
 
-Welcome to the HeteroCat Skills repository! This collection houses various skills designed to extend the capabilities of AI agents, enabling them to perform specialized tasks such as retrieving academic papers and generating tech news summaries.
+欢迎来到 HeteroCat 技能库（HeteroCat Skills）！这里收集了各种旨在扩展 AI 智能体能力的技能，使其能够执行专业任务，如检索学术论文和生成科技新闻摘要。
 
-## 📂 Available Skills
+## 📂 可用技能
 
-Currently, the following skills are available:
+目前提供以下技能：
 
-### 1. [arXiv API Skill](.claude/skills/arxiv/SKILL.md)
-**Description:** Search and retrieve academic papers from arXiv's open-access repository.
-- **Key Features:**
-  - Search by keywords, author, or paper ID.
-  - Filter by subject category (e.g., CS, Physics).
-  - Retrieve paper metadata (abstracts, authors, dates).
+### 1. [arXiv API 技能](.claude/skills/arxiv/SKILL.md)
+**描述：** 从 arXiv 开放获取仓库搜索并检索学术论文。
+- **主要功能：**
+  - 按关键词、作者或论文 ID 搜索。
+  - 按学科分类（如计算机科学、物理学）过滤。
+  - 检索论文元数据（摘要、作者、日期）。
 
-### 2. [Tech News Daily](.claude/skills/tech-news-daily/SKILL.md)
-**Description:** Automatically fetch the latest tech news from multiple sources and generate a structured daily report.
-- **Key Features:**
-  - Aggregates news from TechCrunch, The Verge, 36Kr, and more.
-  - Filters and categorizes news by topic (AI, Cloud, Mobile, etc.).
-  - Generates summaries and translates content for a daily digest.
+### 2. [每日科技新闻](.claude/skills/tech-news-daily/SKILL.md)
+**描述：** 自动从多个来源获取最新的科技新闻并生成结构化的每日报告。
+- **主要功能：**
+  - 聚合来自 TechCrunch、The Verge、36氪等的新闻。
+  - 按主题（AI、云计算、移动开发等）筛选和分类新闻。
+  - 生成摘要并翻译内容以生成每日简报。
 
-## 🚀 Getting Started
+## 🚀 快速开始
 
-Each skill is located in the `.claude/skills/` directory and comes with its own documentation and scripts. Please refer to the `SKILL.md` file within each skill's directory for detailed usage instructions and examples.
+每个技能都位于 `.claude/skills/` 目录下，并附带了自己的文档和脚本。请参阅每个技能目录中的 `SKILL.md` 文件以获取详细的使用说明和示例。
 
-## 🤝 Contribution
+## 🤝 贡献
 
-Contributions are welcome! If you have a new skill idea or want to improve an existing one, please feel free to submit a Pull Request.
+欢迎贡献！如果你有新的技能想法或想要改进现有的技能，请随时提交 Pull Request。
 
 ---
-*Powered by HeteroCat*
+*由 HeteroCat 提供支持*
