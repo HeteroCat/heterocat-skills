@@ -12,7 +12,7 @@ MiniMax 语音合成与音乐生成 API 的 Python 客户端工具集。
 **⚠️ 重要：每次使用前必须先执行以下命令设置 API Key**
 
 ```bash
-export MINIMAX_API_KEY="your_minimax_api_key_here"
+export MINIMAX_API_KEY="your_api_key_here"
 ```
 
 **默认输出目录**: 所有生成的音频自动保存到 `./assets/audios/` 目录（自动创建）
@@ -39,22 +39,22 @@ export MINIMAX_API_KEY="your_minimax_api_key_here"
 
 ```bash
 # 同步语音合成（≤ 10000 字符）
-python scripts/text_to_audio.py -t "你好" -v male-qn-qingse -o output.mp3
+python3 scripts/text_to_audio.py -t "你好" -v male-qn-qingse -o output.mp3
 
 # 异步语音合成（10001-50000 字符）
-python scripts/text_to_audio_async.py -t "长文本..." -v audiobook_male_1 -w -o output.mp3
+python3 scripts/text_to_audio_async.py -t "长文本..." -v audiobook_male_1 -w -o output.mp3
 
 # 查询音色
-python scripts/voice_manager.py list
+python3 scripts/voice_manager.py list
 
 # 音色复刻
-python scripts/voice_manager.py clone --file voice.mp3 --voice-id MyVoice001
+python3 scripts/voice_manager.py clone --file voice.mp3 --voice-id MyVoice001
 
 # 音色设计
-python scripts/voice_manager.py design --prompt "温暖女声" --preview "试听文本" -o trial.mp3
+python3 scripts/voice_manager.py design --prompt "温暖女声" --preview "试听文本" -o trial.mp3
 
 # 音乐生成
-python scripts/music_generation.py -l lyrics.txt -p "流行音乐,轻快" -o song.mp3
+python3 scripts/music_generation.py -l lyrics.txt -p "流行音乐,轻快" -o song.mp3
 ```
 
 ## 支持的模型
@@ -71,6 +71,7 @@ python scripts/music_generation.py -l lyrics.txt -p "流行音乐,轻快" -o son
 
 - `male-qn-qingse` - 男声-青年-青涩
 - `female-shaonv` - 女声-少女
+- `tianxin_xiaoling` - 女声-甜心小玲
 - `audiobook_male_1` - 有声书男声
 - `Chinese (Mandarin)_News_Anchor` - 新闻主播
 

@@ -55,16 +55,24 @@ class MiniMaxVoiceManager:
             api_key: MiniMax API Key
             group_id: MiniMax Group ID
         """
-        self.api_key = api_key or os.getenv("MINIMAX_API_KEY")
+        raw_key = api_key or os.getenv("MINIMAX_API_KEY")
         self.group_id = group_id or os.getenv("MINIMAX_GROUP_ID")
 
-        if not self.api_key:
-            raise ValueError("API key is required. Set MINIMAX_API_KEY env var or pass api_key parameter.")
+        if not raw_key:
+            raise ValueError(
+                "API key is required.\n"
+                "Please set MINIMAX_API_KEY environment variable:\n"
+                "  export MINIMAX_API_KEY='Bearer sk-api-xxxxx'\n"
+                "Or pass api_key parameter to MiniMaxVoiceManager()."
+            )
+
+        # 自动添加 Bearer 前缀（如果没有的话）
+        self.api_key = raw_key if raw_key.startswith("Bearer ") else f"Bearer {raw_key}"
 
     def _get_headers(self, content_type: str = "application/json") -> Dict[str, str]:
         """获取请求头"""
         headers = {
-            "Authorization": f"Bearer {self.api_key}"
+            "Authorization": self.api_key
         }
         if content_type:
             headers["Content-Type"] = content_type

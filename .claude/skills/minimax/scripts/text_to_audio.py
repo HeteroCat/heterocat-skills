@@ -9,9 +9,14 @@ API: POST /v1/t2a_v2
 import os
 import json
 import base64
-import requests
+import warnings
 from typing import Optional, Dict, Any
 from pathlib import Path
+
+# 过滤 urllib3 关于 OpenSSL 的警告（macOS 使用 LibreSSL 是正常的）
+warnings.filterwarnings("ignore", category=UserWarning, module="urllib3")
+
+import requests
 
 
 class MiniMaxTTS:
@@ -55,20 +60,26 @@ class MiniMaxTTS:
             api_key: MiniMax API Key，默认从环境变量 MINIMAX_API_KEY 读取
             group_id: MiniMax Group ID，默认从环境变量 MINIMAX_GROUP_ID 读取
         """
-        self.api_key = api_key or os.getenv("MINIMAX_API_KEY")
+        raw_key = api_key or os.getenv("MINIMAX_API_KEY")
         self.group_id = group_id or os.getenv("MINIMAX_GROUP_ID")
 
-        if not self.api_key:
-            raise ValueError("API key is required. Set MINIMAX_API_KEY env var or pass api_key parameter.")
+        if not raw_key:
+            raise ValueError(
+                "API key is required.\n"
+                "Please set MINIMAX_API_KEY environment variable:\n"
+                "  export MINIMAX_API_KEY='Bearer sk-api-xxxxx'\n"
+                "Or pass api_key parameter to MiniMaxTTS()."
+            )
+
+        # 自动添加 Bearer 前缀（如果没有的话）
+        self.api_key = raw_key if raw_key.startswith("Bearer ") else f"Bearer {raw_key}"
 
     def _get_headers(self) -> Dict[str, str]:
         """获取请求头"""
         headers = {
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.api_key}"
+            "Authorization": self.api_key
         }
-        if self.group_id:
-            headers["X-Minimax-Group-Id"] = self.group_id
         return headers
 
     def synthesize(
@@ -158,20 +169,46 @@ class MiniMaxTTS:
         if voice_modify:
             payload["voice_modify"] = voice_modify
 
-        response = requests.post(
-            self.BASE_URL,
-            headers=self._get_headers(),
-            json=payload
-        )
-        response.raise_for_status()
+        # 尝试主 URL，失败时尝试备用 URL
+        urls_to_try = [self.BASE_URL, self.BACKUP_URL]
+        last_error = None
 
-        result = response.json()
+        for url in urls_to_try:
+            try:
+                response = requests.post(
+                    url,
+                    headers=self._get_headers(),
+                    json=payload,
+                    timeout=60
+                )
+                response.raise_for_status()
+                result = response.json()
 
-        if result.get("base_resp", {}).get("status_code") != 0:
-            raise APIError(
-                f"API Error: {result['base_resp']['status_msg']} "
-                f"(code: {result['base_resp']['status_code']})"
-            )
+                if result.get("base_resp", {}).get("status_code") == 0:
+                    return result
+
+                # API 返回了错误
+                error_code = result.get("base_resp", {}).get("status_code")
+                error_msg = result.get("base_resp", {}).get("status_msg", "Unknown error")
+
+                # 认证错误不需要重试
+                if error_code == 1004:
+                    raise APIError(
+                        f"Authentication failed: {error_msg}\n"
+                        f"Please check your API key. It should be in format: 'Bearer sk-api-xxxxx'"
+                    )
+
+                last_error = APIError(f"API Error from {url}: {error_msg} (code: {error_code})")
+
+            except requests.exceptions.Timeout:
+                last_error = APIError(f"Request to {url} timed out after 60 seconds")
+            except requests.exceptions.ConnectionError as e:
+                last_error = APIError(f"Connection error to {url}: {str(e)}")
+            except requests.exceptions.RequestException as e:
+                last_error = APIError(f"Request failed for {url}: {str(e)}")
+
+        # 所有 URL 都失败了
+        raise last_error or APIError("All API endpoints failed")
 
         return result
 
@@ -236,28 +273,71 @@ class APIError(Exception):
 def main():
     """命令行使用示例"""
     import argparse
+    import sys
 
-    parser = argparse.ArgumentParser(description="MiniMax Text-to-Speech")
+    parser = argparse.ArgumentParser(
+        description="MiniMax Text-to-Speech",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+示例:
+  # 基础使用
+  python3 text_to_audio.py -t "你好世界" -v tianxin_xiaoling
+
+  # 指定输出路径和语速
+  python3 text_to_audio.py -t "你好世界" -v male-qn-qingse -o hello.mp3 --speed 0.8
+
+  # 添加情绪
+  python3 text_to_audio.py -t "太棒了！" -v female-shaonv --emotion happy
+
+常用音色:
+  tianxin_xiaoling    - 女声-甜心小玲
+  female-shaonv       - 女声-少女
+  male-qn-qingse      - 男声-青年-青涩
+  audiobook_male_1    - 有声书男声
+
+环境变量:
+  MINIMAX_API_KEY     - API Key (格式: Bearer sk-api-xxxxx 或直接 sk-api-xxxxx)
+        """
+    )
     parser.add_argument("--text", "-t", required=True, help="Text to synthesize")
     parser.add_argument("--voice", "-v", default="male-qn-qingse", help="Voice ID")
     parser.add_argument("--model", "-m", default="speech-2.8-hd", help="Model name")
     parser.add_argument("--output", "-o", default="output.mp3", help="Output file")
-    parser.add_argument("--speed", type=float, default=1.0, help="Speech speed")
-    parser.add_argument("--emotion", help="Emotion (happy/sad/angry/etc.)")
+    parser.add_argument("--speed", type=float, default=1.0, help="Speech speed (0.5-2.0)")
+    parser.add_argument("--emotion", help="Emotion: happy/sad/angry/calm/fluent/whisper")
 
     args = parser.parse_args()
 
-    client = MiniMaxTTS()
+    try:
+        client = MiniMaxTTS()
+    except ValueError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
 
-    result = client.synthesize(
-        text=args.text,
-        voice_id=args.voice,
-        model=args.model,
-        speed=args.speed,
-        emotion=args.emotion
-    )
-    client.save_audio(result, args.output)
-    print("Done!")
+    try:
+        print(f"Synthesizing text ({len(args.text)} chars)...")
+        print(f"  Voice: {args.voice}")
+        print(f"  Model: {args.model}")
+        print(f"  Speed: {args.speed}")
+        if args.emotion:
+            print(f"  Emotion: {args.emotion}")
+
+        result = client.synthesize(
+            text=args.text,
+            voice_id=args.voice,
+            model=args.model,
+            speed=args.speed,
+            emotion=args.emotion
+        )
+        output_path = client.save_audio(result, args.output)
+        print(f"\nSuccess! Audio saved to: {output_path}")
+
+    except APIError as e:
+        print(f"\nAPI Error: {e}", file=sys.stderr)
+        sys.exit(1)
+    except Exception as e:
+        print(f"\nUnexpected error: {e}", file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
