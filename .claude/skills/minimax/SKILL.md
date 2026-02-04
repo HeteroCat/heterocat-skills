@@ -9,7 +9,7 @@ MiniMax 语音合成与音乐生成 API 的 Python 客户端工具集。
 
 ## 环境变量
 
-**⚠️ 重要：每次使用前必须先执行以下命令设置 API Key**
+**⚠️ 重要：每次使用前必须先检查是否已设置 API Key 环境变量，否则先执行下面的配置再进行脚本调用。**
 
 ```bash
 export MINIMAX_API_KEY="your_api_key_here"
