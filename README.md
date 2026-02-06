@@ -36,6 +36,21 @@
   - 支持命令行调用与 Python 模块调用。
   - 自动生成标准 SRT 时间轴字幕。
 
+### 5. [Bar Chart Race 生成器](.claude/skills/bar-chart-race-generator/SKILL.md)
+**描述：** 将 CSV 时序排名数据转换为 D3 动态柱状图竞赛（Bar Chart Race）HTML 可视化。
+- **主要功能：**
+  - 自动校验 CSV 字段（如 `date/name/category/value`）。
+  - 生成可交互动画图表（重播、速度切换、平滑数值过渡）。
+  - 适用于历史趋势、排名变化、竞争格局演变展示。
+
+### 6. [Doubao 视频生成](.claude/skills/generate-video/SKILL.md)
+**描述：** 基于豆包 Seedance API 进行文生视频、图生视频、首尾帧视频和连续视频生成。
+- **主要功能：**
+  - 文生视频（text-to-video）。
+  - 图生视频（image-to-video，多参考图）。
+  - 首尾帧视频与多段连续视频拼接。
+  - 支持时长、分辨率、比例、音频等参数控制。
+
 ## 🚀 快速开始
 
 ### 1) 浏览技能文档
@@ -45,6 +60,8 @@
 - `.claude/skills/tech-news-daily/SKILL.md`
 - `.claude/skills/minimax/SKILL.md`
 - `.claude/skills/whisper-subtitle/SKILL.md`
+- `.claude/skills/bar-chart-race-generator/SKILL.md`
+- `.claude/skills/generate-video/SKILL.md`
 
 ### 2) 按技能执行对应脚本
 常用脚本示例：
@@ -52,10 +69,13 @@
 - 科技新闻聚合：`.claude/skills/tech-news-daily/scripts/fetch_tech_news.py`
 - MiniMax 语音合成：`.claude/skills/minimax/scripts/text_to_audio.py`
 - Whisper 字幕生成：`.claude/skills/whisper-subtitle/scripts/whisper_subtitle.py`
+- Bar Chart Race 生成：`.claude/skills/bar-chart-race-generator/scripts/generate_race.py`
+- Doubao 文生视频：`.claude/skills/generate-video/scripts/text_to_video.py`
 
 ### 3) 配置必要环境变量（按需）
 - OpenAI 相关技能：`OPENAI_API_KEY`
 - MiniMax 相关技能：`MINIMAX_API_KEY`（部分脚本还可使用 `MINIMAX_GROUP_ID`）
+- Doubao 视频生成：`ARK_API_KEY`
 
 ## 📁 仓库结构
 
@@ -64,7 +84,9 @@
 ├── arxiv/
 ├── tech-news-daily/
 ├── minimax/
-└── whisper-subtitle/
+├── whisper-subtitle/
+├── bar-chart-race-generator/
+└── generate-video/
 ```
 
 ## 🤝 贡献
