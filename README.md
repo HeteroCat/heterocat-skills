@@ -51,6 +51,13 @@
   - 首尾帧视频与多段连续视频拼接。
   - 支持时长、分辨率、比例、音频等参数控制。
 
+### 7. [Auto-Redbook Skills](.claude/skills/auto-redbook-skills/SKILL.md)
+**描述：** 自动生成小红书封面与图文卡片，并支持可选自动发布流程。
+- **主要功能：**
+  - 根据 Markdown 内容渲染封面与多张正文卡片。
+  - 支持多主题样式和多种分页模式（separator / auto-fit / auto-split / dynamic）。
+  - 提供发布脚本，可配合 Cookie 进行自动发布。
+
 ## 🚀 快速开始
 
 ### 1) 浏览技能文档
@@ -62,6 +69,7 @@
 - `.claude/skills/whisper-subtitle/SKILL.md`
 - `.claude/skills/bar-chart-race-generator/SKILL.md`
 - `.claude/skills/generate-video/SKILL.md`
+- `.claude/skills/auto-redbook-skills/SKILL.md`
 
 ### 2) 按技能执行对应脚本
 常用脚本示例：
@@ -71,11 +79,13 @@
 - Whisper 字幕生成：`.claude/skills/whisper-subtitle/scripts/whisper_subtitle.py`
 - Bar Chart Race 生成：`.claude/skills/bar-chart-race-generator/scripts/generate_race.py`
 - Doubao 文生视频：`.claude/skills/generate-video/scripts/text_to_video.py`
+- 小红书卡片渲染：`.claude/skills/auto-redbook-skills/scripts/render_xhs.py`
 
 ### 3) 配置必要环境变量（按需）
 - OpenAI 相关技能：`OPENAI_API_KEY`
 - MiniMax 相关技能：`MINIMAX_API_KEY`（部分脚本还可使用 `MINIMAX_GROUP_ID`）
 - Doubao 视频生成：`ARK_API_KEY`
+- 小红书发布（可选）：`XHS_COOKIE`
 
 ## 📁 仓库结构
 
@@ -86,7 +96,8 @@
 ├── minimax/
 ├── whisper-subtitle/
 ├── bar-chart-race-generator/
-└── generate-video/
+├── generate-video/
+└── auto-redbook-skills/
 ```
 
 ## 🤝 贡献
