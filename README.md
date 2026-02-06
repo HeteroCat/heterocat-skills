@@ -1,13 +1,15 @@
 # HeteroCat 技能库
 
-欢迎来到 HeteroCat 技能库（HeteroCat Skills）！这里收集了各种旨在扩展 AI 智能体能力的技能，使其能够执行专业任务，如检索学术论文和生成科技新闻摘要。
+欢迎来到 HeteroCat 技能库（HeteroCat Skills）！
+
+本仓库收集了一组可复用的 Agent Skills（技能说明 + 示例脚本），用于扩展 AI 智能体在科研检索、资讯聚合、语音音频处理等场景下的执行能力。
 
 ## 📂 可用技能
 
 目前提供以下技能：
 
 ### 1. [arXiv API 技能](.claude/skills/arxiv/SKILL.md)
-**描述：** 从 arXiv 开放获取仓库搜索并检索学术论文。
+**描述：** 从 arXiv 开放仓库搜索并检索学术论文。
 - **主要功能：**
   - 按关键词、作者或论文 ID 搜索。
   - 按学科分类（如计算机科学、物理学）过滤。
@@ -27,9 +29,43 @@
   - **音色管理**：支持音色查询、复刻和设计，满足个性化需求。
   - **音乐生成**：根据歌词和风格描述生成原创音乐。
 
+### 4. [Whisper 字幕生成](.claude/skills/whisper-subtitle/SKILL.md)
+**描述：** 基于 OpenAI Whisper API，将音频/视频中的语音转写为 SRT 字幕文件。
+- **主要功能：**
+  - 支持 `mp3/mp4/m4a/wav/webm` 等常见格式输入。
+  - 支持命令行调用与 Python 模块调用。
+  - 自动生成标准 SRT 时间轴字幕。
+
 ## 🚀 快速开始
 
-每个技能都位于 `.claude/skills/` 目录下，并附带了自己的文档和脚本。请参阅每个技能目录中的 `SKILL.md` 文件以获取详细的使用说明和示例。
+### 1) 浏览技能文档
+每个技能位于 `.claude/skills/<skill-name>/` 目录下，并附带 `SKILL.md`：
+
+- `.claude/skills/arxiv/SKILL.md`
+- `.claude/skills/tech-news-daily/SKILL.md`
+- `.claude/skills/minimax/SKILL.md`
+- `.claude/skills/whisper-subtitle/SKILL.md`
+
+### 2) 按技能执行对应脚本
+常用脚本示例：
+
+- 科技新闻聚合：`.claude/skills/tech-news-daily/scripts/fetch_tech_news.py`
+- MiniMax 语音合成：`.claude/skills/minimax/scripts/text_to_audio.py`
+- Whisper 字幕生成：`.claude/skills/whisper-subtitle/scripts/whisper_subtitle.py`
+
+### 3) 配置必要环境变量（按需）
+- OpenAI 相关技能：`OPENAI_API_KEY`
+- MiniMax 相关技能：`MINIMAX_API_KEY`（部分脚本还可使用 `MINIMAX_GROUP_ID`）
+
+## 📁 仓库结构
+
+```text
+.claude/skills/
+├── arxiv/
+├── tech-news-daily/
+├── minimax/
+└── whisper-subtitle/
+```
 
 ## 🤝 贡献
 
