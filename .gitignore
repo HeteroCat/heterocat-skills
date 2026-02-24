@@ -28,10 +28,8 @@ MANIFEST
 # Virtual Environments
 venv/
 .venv/
-env/
-.env/
-ENV/
-
+*.env
+redbook-output/
 # IDEs
 .idea/
 .vscode/
