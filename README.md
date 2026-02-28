@@ -1,79 +1,90 @@
 # HeteroCat Skills
 
-[![Skills](https://img.shields.io/badge/Skills-10+-blue)](.claude/skills)
+[![Skills](https://img.shields.io/badge/Skills-12+-blue)](.claude/skills)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
-HeteroCat Skills 是一个 Claude 技能库，收集了一系列可复用的 Agent Skills，用于扩展 AI 智能体在内容创作、科研检索、语音处理、数据可视化等场景下的能力。
+**HeteroCat Skills** 是一个 Claude Code 技能库，收录了一系列开箱即用的 Agent Skills，帮助 AI 智能体在内容创作、科研检索、语音视频处理、数据可视化等场景下快速扩展能力。
 
 ---
 
-## 技能列表
+## 技能总览
 
 ### 内容创作
 
-| 技能 | 描述 | 核心功能 |
+| 技能 | 描述 | 核心能力 |
 |------|------|----------|
-| **auto-redbook-skills** | 小红书笔记素材创作 | 生成封面/正文卡片、多主题样式、自动发布支持 |
-| **generate-video** | 豆包视频生成 | 文生视频、图生视频、首尾帧视频、连续视频拼接 |
-| **minimax** | MiniMax 语音与音乐 | 语音合成（TTS）、音色管理（复刻/设计）、音乐生成 |
+| **auto-redbook-skills** | 小红书笔记素材创作 | 智能撰写标题正文、生成封面/正文图片卡片、多主题样式 |
+| **generate-video** | 豆包视频生成 | 文生视频、图生视频、首尾帧视频、多片段连续生成 |
+| **minimax** | MiniMax 语音与音乐 | 高品质 TTS 语音合成、音色克隆/设计、AI 音乐生成 |
+| **remotion-best-practices** | Remotion 视频开发 | React 代码生成视频的最佳实践、组件化视频制作 |
 
 ### 开发工具
 
-| 技能 | 描述 | 核心功能 |
+| 技能 | 描述 | 核心能力 |
 |------|------|----------|
-| **skill-creator** | 技能创建指南 | 创建新技能的完整流程、打包脚本、最佳实践 |
+| **skill-creator** | 技能创建向导 | 从零开始创建新技能的完整流程、打包脚本、最佳实践 |
 | **mcp-builder** | MCP 服务器开发 | 构建 Model Context Protocol 服务器的完整指南 |
-| **find-skills** | 技能发现助手 | 帮助用户发现可用技能、安装技能 |
+| **find-skills** | 技能发现助手 | 智能匹配用户需求与可用技能、一键安装 |
 
 ### 数据与科研
 
-| 技能 | 描述 | 核心功能 |
+| 技能 | 描述 | 核心能力 |
 |------|------|----------|
-| **arxiv** | arXiv 论文检索 | 搜索论文、按学科过滤、获取元数据 |
-| **tech-news-daily** | 每日科技新闻 | 聚合多源科技新闻、生成结构化日报 |
-| **whisper-subtitle** | 字幕生成 | 音频/视频转 SRT 字幕、支持多格式 |
-| **bar-chart-race-generator** | 动态柱状图 | CSV 转 D3 动画图表、时序排名可视化 |
+| **arxiv** | arXiv 论文检索 | 关键词/作者/标题搜索、学科分类过滤、元数据获取 |
+| **tech-news-daily** | 每日科技新闻 | 聚合 TechCrunch/36氪等多源资讯、生成结构化日报 |
+| **bar-chart-race-generator** | 动态柱状图生成 | CSV 数据转 D3 动画、时序排名可视化、HTML 导出 |
+
+### 音视频处理
+
+| 技能 | 描述 | 核心能力 |
+|------|------|----------|
+| **whisper-subtitle** | 字幕自动生成 | 音频/视频转 SRT 字幕、多格式支持、批量处理 |
+| **x-api** | X (Twitter) 数据获取 | 获取指定用户推文、搜索推文、用户信息查询 |
 
 ---
 
 ## 快速开始
 
-### 方式一：直接使用技能（推荐）
+### 方式一：自然语言调用（推荐）
 
-Claude 会自动识别并使用相关技能。只需描述你的需求：
+Claude 会自动识别你的需求并调用相应技能：
 
 ```
-"帮我搜索关于深度学习的 arXiv 论文"
-"生成一段关于春天的音乐"
-"把这段音频转成字幕"
+"搜索关于大语言模型的最新 arXiv 论文"
+"帮我写一段治愈系音乐"
+"把这段采访音频转成字幕文件"
+"获取马斯克最近的推文"
 ```
 
-### 方式二：手动运行脚本
+### 方式二：手动执行脚本
 
-进入具体技能目录，查看 SKILL.md 并按说明执行：
+进入技能目录，按 SKILL.md 说明运行：
 
 ```bash
-# 示例：使用 MiniMax 语音合成
+# 示例：使用 MiniMax 合成语音
 python .claude/skills/minimax/scripts/text_to_audio.py
 
-# 示例：生成 Bar Chart Race
+# 示例：生成动态柱状图
 python .claude/skills/bar-chart-race-generator/scripts/generate_race.py
 ```
 
-### 环境变量配置
+---
 
-| 技能 | 所需环境变量 |
-|------|-------------|
-| arxiv | 无需配置 |
-| minimax | `MINIMAX_API_KEY` |
-| generate-video | `ARK_API_KEY` |
-| whisper-subtitle | `OPENAI_API_KEY` |
-| tech-news-daily | 无需配置 |
-| auto-redbook-skills | `XHS_COOKIE`（可选，用于发布） |
+## 环境变量配置
+
+| 技能 | 环境变量 | 说明 |
+|------|----------|------|
+| minimax | `MINIMAX_API_KEY` | MiniMax 平台 API 密钥 |
+| generate-video | `ARK_API_KEY` | 豆包/火山引擎 API 密钥 |
+| whisper-subtitle | `OPENAI_API_KEY` | OpenAI API 密钥 |
+| x-api | `X_BEARER_TOKEN` | X (Twitter) API Bearer Token |
+| auto-redbook-skills | `XHS_COOKIE`（可选） | 小红书 Cookie，用于自动发布 |
+| arxiv | - | 无需配置 |
+| tech-news-daily | - | 无需配置 |
 
 ---
 
-## 技能打包与分发
+## 技能打包与安装
 
 ### 打包所有技能
 
@@ -85,15 +96,13 @@ python package_skills.py
 
 ### 安装技能
 
-在 Claude Code 中：
+在 Claude Code 中执行：
 
 ```bash
+# 本地安装
 /skills install /path/to/skill-name.skill
-```
 
-或使用在线链接：
-
-```bash
+# 在线安装
 /skills install https://example.com/skill-name.skill
 ```
 
@@ -103,46 +112,49 @@ python package_skills.py
 
 ```
 .claude/skills/
-├── arxiv/                  # arXiv 论文检索
-├── auto-redbook-skills/    # 小红书笔记创作
-├── bar-chart-race-generator/  # 动态柱状图
-├── find-skills/            # 技能发现
-├── generate-video/         # 豆包视频生成
-├── mcp-builder/            # MCP 服务器开发
-├── minimax/                # MiniMax 语音/音乐
-├── skill-creator/          # 技能创建指南
-├── tech-news-daily/        # 每日科技新闻
-└── whisper-subtitle/       # 字幕生成
+├── arxiv/                      # arXiv 论文检索
+├── auto-redbook-skills/        # 小红书笔记创作
+├── bar-chart-race-generator/   # 动态柱状图
+├── find-skills/                # 技能发现
+├── generate-video/             # 豆包视频生成
+├── mcp-builder/                # MCP 服务器开发
+├── minimax/                    # MiniMax 语音/音乐
+├── remotion-best-practices/    # Remotion 视频开发
+├── skill-creator/              # 技能创建指南
+├── tech-news-daily/            # 每日科技新闻
+├── whisper-subtitle/           # 字幕生成
+└── x-api/                      # X (Twitter) API
 
-dist/                       # 打包输出的 .skill 文件
-package_skills.py           # 技能打包脚本
+dist/                           # 打包输出的 .skill 文件
+package_skills.py               # 技能打包脚本
 ```
 
 ---
 
 ## 创建新技能
 
-使用内置的 `skill-creator` 技能：
+使用内置向导快速创建：
 
 ```
 "帮我创建一个新技能"
 ```
 
-或手动运行初始化脚本：
+或手动初始化：
 
 ```bash
-python .claude/skills/skill-creator/scripts/init_skill.py my-skill --path ./.claude/skills
+python .claude/skills/skill-creator/scripts/init_skill.py my-skill \
+  --path ./.claude/skills
 ```
 
 ---
 
 ## 贡献指南
 
-欢迎贡献新技能或改进现有技能！
+欢迎提交新技能或改进现有技能！
 
 1. Fork 本仓库
 2. 创建新技能或修改现有技能
-3. 确保 SKILL.md 完整且清晰
+3. 确保包含完整的 `SKILL.md` 文档
 4. 提交 Pull Request
 
 ---
@@ -153,4 +165,4 @@ python .claude/skills/skill-creator/scripts/init_skill.py my-skill --path ./.cla
 
 ---
 
-*由 HeteroCat (Jasonhuang) 维护*
+*由 [HeteroCat](https://github.com/yourusername) 维护 | 用 ❤️ 和 🤖 构建*
