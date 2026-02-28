@@ -1,16 +1,26 @@
 ---
 name: x-api
-description: "使用 X (Twitter) API v2 获取推文、用户信息等数据。用于：获取指定用户的最新推文、搜索推文、获取用户信息。需要配置 X_BEARER_TOKEN 环境变量。当用户需要获取 Twitter/X 上的推文或用户信息时触发。"
+description: "使用 X (Twitter) API v2 获取和发布推文、媒体、用户信息等数据。用于：获取指定用户的最新推文、搜索推文、获取用户信息、发布纯文本/带图片/带视频的推文。获取操作需要 X_BEARER_TOKEN，发布操作需要 OAuth 1.0a 四件套：X_API_KEY、X_API_SECRET、X_ACCESS_TOKEN、X_ACCESS_TOKEN_SECRET。当用户需要获取或发布 Twitter/X 上的推文、上传媒体文件（图片/视频）时触发。"
 ---
 
 # X (Twitter) API
 
-使用 X API v2 获取推文和用户信息。
+使用 X API v2 获取和发布推文、媒体、用户信息。
 
 ## 前置要求
 
-确保环境变量中已配置：
-- `X_BEARER_TOKEN` - X API Bearer Token
+### 只读操作（获取推文、搜索、用户信息）
+```bash
+export X_BEARER_TOKEN="你的 Bearer Token"
+```
+
+### 发布推文（OAuth 1.0a）
+```bash
+export X_API_KEY="你的 Consumer Key"
+export X_API_SECRET="你的 Consumer Secret"
+export X_ACCESS_TOKEN="你的 Access Token"
+export X_ACCESS_TOKEN_SECRET="你的 Access Token Secret"
+```
 
 ## 可用功能
 
@@ -64,6 +74,64 @@ python scripts/get_user_info.py <username>
 python scripts/get_user_info.py cheerselflin
 ```
 
+### 4. 发布推文
+
+使用 `post_tweet.py` 脚本发布推文。
+
+**用法**:
+```bash
+python scripts/post_tweet.py "推文内容"
+```
+
+**参数**:
+- `text` (string): 推文内容，最多 280 字符
+
+**环境变量要求**:
+发布推文需要 OAuth 1.0a 认证（用户上下文）：
+- `X_API_KEY` - API Key (Consumer Key)
+- `X_API_SECRET` - API Secret (Consumer Secret)
+- `X_ACCESS_TOKEN` - Access Token
+- `X_ACCESS_TOKEN_SECRET` - Access Token Secret
+
+**如何获取 OAuth 凭证**:
+1. 前往 [X Developer Portal](https://developer.x.com/en/portal/dashboard)
+2. 进入你的项目/应用 → "Keys and Tokens"
+3. 生成 "Access Token and Secret"（需要有 Write 权限）
+4. 如果应用权限变更过，需要重新生成 Access Token
+
+**示例**:
+```bash
+# 发布纯文本推文
+python scripts/post_tweet.py "Hello, X!"
+
+# 发布带图片的推文
+python scripts/post_tweet.py "Check out this photo!" --media ./photo.jpg
+
+# 发布带多张图片的推文（最多4张）
+python scripts/post_tweet.py "Multiple images" -m ./img1.jpg -m ./img2.jpg -m ./img3.jpg
+
+# 使用已上传的 media_id
+python scripts/post_tweet.py "Using media id" --media-id 1234567890
+```
+
+### 5. 上传媒体文件
+
+使用 `upload_media.py` 脚本上传图片或视频（供后续发推文使用）。
+
+**用法**:
+```bash
+python scripts/upload_media.py <文件路径>
+```
+
+**支持的格式**: JPG, PNG, GIF, WEBP, MP4, MOV
+
+**示例**:
+```bash
+python scripts/upload_media.py ./my-image.png
+```
+
+**返回**: Media ID，可用于 `post_tweet.py --media-id`
+
 ## 返回数据格式
 
 ### 推文数据
@@ -100,19 +168,38 @@ python scripts/get_user_info.py cheerselflin
 }
 ```
 
+### 发布推文响应
+
+```json
+{
+  "data": {
+    "id": "1234567890",
+    "text": "推文内容"
+  }
+}
+```
+
 ## 错误处理
 
-脚本会处理以下错误：
+### 只读操作错误
 - `401` - 认证失败，检查 Bearer Token
-- `403` - 权限不足或超出请求限制
+- `403` - 超出请求限制
 - `404` - 用户不存在
 - `429` - 请求过于频繁，需要等待重置
+
+### 发布推文错误
+- `401` - OAuth 认证失败，检查 API Key/Secret 和 Access Token
+- `403` - 权限不足，确保应用有 "Read and Write" 权限且 Token 已刷新
+- `429` - 请求过于频繁或日推数限制
 
 ## 注意事项
 
 1. **请求限制**: X API v2 有速率限制
 2. **数据保留**: `search/recent` 仅返回最近 7 天的推文
-3. **认证**: 仅支持 Bearer Token 认证（只读访问）
+3. **认证方式**:
+   - 只读操作：Bearer Token（应用上下文）
+   - 发布推文：OAuth 1.0a（用户上下文）
+4. **发布权限**: 发布推文需要应用在 X Developer Portal 中启用 "Read and Write" 权限，且 Access Token 需要重新生成以应用新权限
 
 ## 参考文档
 

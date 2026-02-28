@@ -17,6 +17,7 @@
 | **generate-video** | 豆包视频生成 | 文生视频、图生视频、首尾帧视频、多片段连续生成 |
 | **minimax** | MiniMax 语音与音乐 | 高品质 TTS 语音合成、音色克隆/设计、AI 音乐生成 |
 | **remotion-best-practices** | Remotion 视频开发 | React 代码生成视频的最佳实践、组件化视频制作 |
+| **x-api** | X (Twitter) 发布与获取 | 发布推文（支持图文/视频）、获取用户推文、搜索推文、用户信息查询、媒体上传 |
 
 ### 开发工具
 
@@ -39,7 +40,6 @@
 | 技能 | 描述 | 核心能力 |
 |------|------|----------|
 | **whisper-subtitle** | 字幕自动生成 | 音频/视频转 SRT 字幕、多格式支持、批量处理 |
-| **x-api** | X (Twitter) 数据获取 | 获取指定用户推文、搜索推文、用户信息查询 |
 
 ---
 
@@ -77,7 +77,8 @@ python .claude/skills/bar-chart-race-generator/scripts/generate_race.py
 | minimax | `MINIMAX_API_KEY` | MiniMax 平台 API 密钥 |
 | generate-video | `ARK_API_KEY` | 豆包/火山引擎 API 密钥 |
 | whisper-subtitle | `OPENAI_API_KEY` | OpenAI API 密钥 |
-| x-api | `X_BEARER_TOKEN` | X (Twitter) API Bearer Token |
+| x-api (获取) | `X_BEARER_TOKEN` | 只读访问 Bearer Token |
+| x-api (发布) | `X_API_KEY`, `X_API_SECRET`, `X_ACCESS_TOKEN`, `X_ACCESS_TOKEN_SECRET` | OAuth 1.0a 四件套 |
 | auto-redbook-skills | `XHS_COOKIE`（可选） | 小红书 Cookie，用于自动发布 |
 | arxiv | - | 无需配置 |
 | tech-news-daily | - | 无需配置 |
@@ -123,7 +124,7 @@ python package_skills.py
 ├── skill-creator/              # 技能创建指南
 ├── tech-news-daily/            # 每日科技新闻
 ├── whisper-subtitle/           # 字幕生成
-└── x-api/                      # X (Twitter) API
+└── x-api/                      # X (Twitter) 发布与获取
 
 dist/                           # 打包输出的 .skill 文件
 package_skills.py               # 技能打包脚本
