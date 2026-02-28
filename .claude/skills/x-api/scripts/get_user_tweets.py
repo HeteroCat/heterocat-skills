@@ -1,12 +1,20 @@
 #!/usr/bin/env python3
 """
-获取 X (Twitter) 用户的最新推文
+获取 X (Twitter) 用户的最新推文 - 飞书友好格式
 
 用法:
     python get_user_tweets.py <username> [max_results]
 
 示例:
     python get_user_tweets.py cheerselflin 5
+
+输出格式 (2026-02-28优化):
+- 标题：# 序号. YYYY-MM-DD HH:MM
+- 推文内容：使用 > 引用块展示原文
+- 媒体：直接链接格式 "图片: https://..." / "视频: https://..."
+- 统计：❤️likes 🔄RTs 💬回复 🔁quotes
+- 无 Markdown 图像语法 ![alt](url)（飞书不渲染）
+- 无代码块
 """
 
 import sys
@@ -15,6 +23,7 @@ import json
 import urllib.request
 import urllib.error
 from urllib.parse import urlencode
+from datetime import datetime
 
 API_BASE_URL = "https://api.x.com/2"
 BEARER_TOKEN = os.environ.get("X_BEARER_TOKEN")
@@ -65,72 +74,73 @@ def get_user_tweets(username, max_results=5):
     return api_request(f"/users/{user_id}/tweets", params)
 
 
-def format_output(data):
-    """格式化输出推文"""
-    tweets = data.get("data", [])
-    media_map = {m["media_key"]: m for m in data.get("includes", {}).get("media", [])}
+def format_tweet(tweet, media_map, index):
+    """格式化单条推文为飞书友好格式"""
+    created_at = tweet.get("created_at", "")
+    # 转换时间格式
+    try:
+        dt = datetime.fromisoformat(created_at.replace("Z", "+00:00"))
+        time_str = dt.strftime("%Y-%m-%d %H:%M")
+    except:
+        time_str = created_at[:16].replace("T", " ")
 
-    output = []
-    for i, tweet in enumerate(tweets, 1):
-        # 基本信息
-        created_at = tweet.get("created_at", "").replace("T", " ").replace("Z", "")[:19]  # 显示到秒
-        text = tweet.get("text", "")
-        metrics = tweet.get("public_metrics", {})
+    text = tweet.get("text", "")
+    metrics = tweet.get("public_metrics", {})
+    media_keys = tweet.get("attachments", {}).get("media_keys", [])
 
-        output.append(f"\n{'='*60}")
-        output.append(f"[{i}] {created_at}")
-        output.append(f"{'='*60}")
-        output.append(f"{text}")
-        output.append("")
+    # 统计
+    likes = metrics.get("like_count", 0)
+    retweets = metrics.get("retweet_count", 0)
+    replies = metrics.get("reply_count", 0)
+    quotes = metrics.get("quote_count", 0)
 
-        # 互动数据
-        likes = metrics.get("like_count", 0)
-        retweets = metrics.get("retweet_count", 0)
-        replies = metrics.get("reply_count", 0)
-        views = metrics.get("impression_count", 0)
-        output.append(f"❤️ {likes}  🔄 {retweets}  💬 {replies}  👁 {views:,}")
+    lines = []
+    # 标题
+    lines.append(f"# {index}. {time_str}")
+    lines.append("")
 
-        # 媒体信息
-        media_keys = tweet.get("attachments", {}).get("media_keys", [])
-        if media_keys:
-            output.append("")
-            for key in media_keys:
-                media = media_map.get(key)
-                if not media:
-                    continue
+    # 推文内容（引用块）
+    lines.append(f"> {text}")
+    lines.append("")
 
-                media_type = media.get("type")
-                width = media.get("width", 0)
-                height = media.get("height", 0)
+    # 媒体
+    for key in media_keys:
+        media = media_map.get(key)
+        if not media:
+            continue
 
-                if media_type == "photo":
-                    # 图片
-                    url = media.get("url", "")
-                    output.append(f"📷 图片 ({width}x{height})")
-                    output.append(f"   {url}")
+        media_type = media.get("type")
 
-                elif media_type == "video":
-                    # 视频 - 只取最高清版本
-                    variants = media.get("variants", [])
-                    mp4_variants = [v for v in variants if v.get("content_type") == "video/mp4"]
+        if media_type == "photo":
+            url = media.get("url", "")
+            lines.append(f"图片: {url}")
 
-                    if mp4_variants:
-                        # 按比特率排序，取最高的（最清晰的）
-                        best = max(mp4_variants, key=lambda x: x.get("bit_rate", 0))
-                        video_url = best.get("url", "")
-                        output.append(f"🎬 视频 ({width}x{height})")
-                        output.append(f"   {video_url}")
+        elif media_type == "video":
+            # 视频取最高清版本
+            variants = media.get("variants", [])
+            mp4_variants = [v for v in variants if v.get("content_type") == "video/mp4"]
+            if mp4_variants:
+                best = max(mp4_variants, key=lambda x: x.get("bit_rate", 0))
+                video_url = best.get("url", "")
+                lines.append(f"视频: {video_url}")
 
-                    preview = media.get("preview_image_url", "")
-                    if preview:
-                        output.append(f"   预览图: {preview}")
+            preview = media.get("preview_image_url", "")
+            if preview:
+                lines.append(f"预览图: {preview}")
 
-    return "\n".join(output)
+    lines.append("")
+    # 统计
+    lines.append(f"❤️{likes} 🔄{retweets} 💬{replies} 🔁{quotes}")
+    lines.append("")
+
+    return "\n".join(lines)
 
 
 def main():
     if len(sys.argv) < 2:
         print("用法: python get_user_tweets.py <username> [max_results]", file=sys.stderr)
+        print("\n示例:", file=sys.stderr)
+        print("  python get_user_tweets.py cheerselflin 5", file=sys.stderr)
         sys.exit(1)
 
     username = sys.argv[1]
@@ -138,8 +148,16 @@ def main():
 
     try:
         result = get_user_tweets(username, max_results)
-        # 输出格式化结果
-        print(format_output(result))
+
+        tweets = result.get("data", [])
+        media_map = {m["media_key"]: m for m in result.get("includes", {}).get("media", [])}
+
+        output = []
+        for i, tweet in enumerate(tweets, 1):
+            output.append(format_tweet(tweet, media_map, i))
+
+        print("\n".join(output))
+
     except Exception as e:
         print(f"错误: {e}", file=sys.stderr)
         sys.exit(1)

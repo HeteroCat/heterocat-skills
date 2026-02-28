@@ -42,6 +42,26 @@ python scripts/get_user_tweets.py <username> [max_results]
 python scripts/get_user_tweets.py cheerselflin 5
 ```
 
+**输出格式** (2026-02-28优化):
+```
+# 1. 2026-02-27 20:33
+
+> I'll stick to being a dog mom thanks 🐶 https://t.co/sPRYAnTGwO
+
+视频: https://video.twimg.com/amplify_video/.../xxx.mp4
+预览图: https://pbs.twimg.com/amplify_video_thumb/.../xxx.jpg
+
+❤️793 🔄13 💬39 🔁1
+```
+
+格式说明：
+- 标题：`# 序号. YYYY-MM-DD HH:MM`
+- 推文内容：`> 引用块` 展示原文
+- 媒体：`图片: https://...` / `视频: https://...` / `预览图: https://...`
+- 统计：`❤️likes 🔄RTs 💬回复 🔁quotes`
+- 无 Markdown 图像语法 `![alt](url)`（飞书/飞书文档不渲染）
+- 无代码块
+
 ### 2. 搜索推文
 
 使用 `search_tweets.py` 脚本搜索公开推文。
@@ -132,52 +152,34 @@ python scripts/upload_media.py ./my-image.png
 
 **返回**: Media ID，可用于 `post_tweet.py --media-id`
 
-## 返回数据格式
+## 技能组合 Workflow
 
-### 推文数据
-```json
-{
-  "id": "1234567890",
-  "text": "推文内容",
-  "created_at": "2024-01-01T00:00:00Z",
-  "public_metrics": {
-    "retweet_count": 10,
-    "reply_count": 5,
-    "like_count": 20,
-    "quote_count": 2
-  }
-}
+### 生成视频并发布到 X
+
+结合 `generate-video` skill 和 `x-api` skill：
+
+```bash
+# 1. 生成视频（使用豆包视频生成）
+cd .claude/skills/generate-video/scripts
+python text_to_video.py "可爱猫咪在阳光下打盹" -t 5 -r 1:1
+
+# 2. 上传视频到 X
+cd .claude/skills/x-api/scripts
+python upload_media.py /path/to/video.mp4
+
+# 3. 获取 Media ID 后发布推文
+python post_tweet.py "🐱 AI生成的视频" --media-id <MEDIA_ID>
 ```
 
-### 用户数据
-```json
-{
-  "id": "1234567890",
-  "name": "显示名称",
-  "username": "cheerselflin",
-  "description": "个人简介",
-  "public_metrics": {
-    "followers_count": 1000,
-    "following_count": 500,
-    "tweet_count": 10000,
-    "listed_count": 50
-  },
-  "created_at": "2010-01-01T00:00:00Z",
-  "profile_image_url": "https://...",
-  "verified": false
-}
-```
+## 脚本文件
 
-### 发布推文响应
-
-```json
-{
-  "data": {
-    "id": "1234567890",
-    "text": "推文内容"
-  }
-}
-```
+| 脚本 | 功能 | 认证方式 |
+|-----|------|---------|
+| `get_user_tweets.py` | 获取用户推文 | Bearer Token |
+| `search_tweets.py` | 搜索推文 | Bearer Token |
+| `get_user_info.py` | 获取用户信息 | Bearer Token |
+| `post_tweet.py` | 发布推文 | OAuth 1.0a |
+| `upload_media.py` | 上传媒体文件 | OAuth 1.0a |
 
 ## 错误处理
 
