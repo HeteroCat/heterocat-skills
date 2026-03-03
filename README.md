@@ -1,9 +1,9 @@
 # HeteroCat Skills
 
-[![Skills](https://img.shields.io/badge/Skills-12+-blue)](.claude/skills)
+[![Skills](https://img.shields.io/badge/Skills-13+-blue)](.claude/skills)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
-**HeteroCat Skills** 是一个 Claude Code 技能库，收录了一系列开箱即用的 Agent Skills，帮助 AI 智能体在内容创作、科研检索、语音视频处理、数据可视化等场景下快速扩展能力。
+**HeteroCat Skills** 是一个 Claude Code 技能库，收录了一系列开箱即用的 Agent Skills，帮助 AI 智能体在内容创作、AI 绘图、科研检索、语音视频处理、数据可视化等场景下快速扩展能力。
 
 ---
 
@@ -18,6 +18,12 @@
 | **minimax** | MiniMax 语音与音乐 | 高品质 TTS 语音合成、音色克隆/设计、AI 音乐生成 |
 | **remotion-best-practices** | Remotion 视频开发 | React 代码生成视频的最佳实践、组件化视频制作 |
 | **x-api** | X (Twitter) 发布与获取 | 发布推文（支持图文/视频）、获取用户推文、搜索推文、用户信息查询、媒体上传 |
+
+### AI 绘图与图像
+
+| 技能 | 描述 | 核心能力 |
+|------|------|----------|
+| **nano-banana2** | AI 图像生成与编辑 | 文生图、图生图、基于 OpenRouter 的 Gemini 图像模型、提示词优化指南 |
 
 ### 开发工具
 
@@ -51,9 +57,10 @@ Claude 会自动识别你的需求并调用相应技能：
 
 ```
 "搜索关于大语言模型的最新 arXiv 论文"
-"帮我写一段治愈系音乐"
+"帮我生成一张赛博朋克风格的猫咪图片"
 "把这段采访音频转成字幕文件"
 "获取马斯克最近的推文"
+"帮我写一段治愈系音乐"
 ```
 
 ### 方式二：手动执行脚本
@@ -66,6 +73,12 @@ python .claude/skills/minimax/scripts/text_to_audio.py
 
 # 示例：生成动态柱状图
 python .claude/skills/bar-chart-race-generator/scripts/generate_race.py
+
+# 示例：使用 nano-banana2 生成图片
+python .claude/skills/nano-banana2/scripts/generate_image.py "一只可爱的猫咪"
+
+# 示例：基于图片进行编辑（图生图）
+python .claude/skills/nano-banana2/scripts/generate_image.py --image ./input.png "改变风格为油画"
 ```
 
 ---
@@ -74,6 +87,7 @@ python .claude/skills/bar-chart-race-generator/scripts/generate_race.py
 
 | 技能 | 环境变量 | 说明 |
 |------|----------|------|
+| nano-banana2 | `OPENROUTER_API_KEY` | OpenRouter API 密钥（用于 Gemini 图像生成） |
 | minimax | `MINIMAX_API_KEY` | MiniMax 平台 API 密钥 |
 | generate-video | `ARK_API_KEY` | 豆包/火山引擎 API 密钥 |
 | whisper-subtitle | `OPENAI_API_KEY` | OpenAI API 密钥 |
@@ -90,10 +104,16 @@ python .claude/skills/bar-chart-race-generator/scripts/generate_race.py
 ### 打包所有技能
 
 ```bash
+# 打包为 .skill 格式（Claude Code 原生格式）
 python package_skills.py
+
+# 打包为 .zip 格式（通用格式）
+python package_zip.py
 ```
 
-打包后的 `.skill` 文件会输出到 `dist/` 目录。
+打包后的文件会输出到：
+- `.skill` 文件 → `dist/` 目录
+- `.zip` 文件 → `zip_dist/` 目录
 
 ### 安装技能
 
@@ -120,6 +140,7 @@ python package_skills.py
 ├── generate-video/             # 豆包视频生成
 ├── mcp-builder/                # MCP 服务器开发
 ├── minimax/                    # MiniMax 语音/音乐
+├── nano-banana2/               # AI 图像生成与编辑
 ├── remotion-best-practices/    # Remotion 视频开发
 ├── skill-creator/              # 技能创建指南
 ├── tech-news-daily/            # 每日科技新闻
@@ -127,7 +148,9 @@ python package_skills.py
 └── x-api/                      # X (Twitter) 发布与获取
 
 dist/                           # 打包输出的 .skill 文件
-package_skills.py               # 技能打包脚本
+zip_dist/                       # 打包输出的 .zip 文件
+package_skills.py               # 打包为 .skill 格式
+package_zip.py                  # 打包为 .zip 格式
 ```
 
 ---
@@ -145,6 +168,12 @@ package_skills.py               # 技能打包脚本
 ```bash
 python .claude/skills/skill-creator/scripts/init_skill.py my-skill \
   --path ./.claude/skills
+```
+
+然后编辑生成的 `SKILL.md` 和脚本文件，完成后打包：
+
+```bash
+python .claude/skills/skill-creator/scripts/package_skill.py .claude/skills/my-skill
 ```
 
 ---
@@ -166,4 +195,4 @@ python .claude/skills/skill-creator/scripts/init_skill.py my-skill \
 
 ---
 
-*由 [HeteroCat](https://github.com/yourusername) 维护 | 用 ❤️ 和 🤖 构建*
+*由 HeteroCat 维护 | 用 ❤️ 和 🤖 构建*

@@ -28,6 +28,7 @@ MANIFEST
 
 # Virtual Environments
 venv/
+img/
 .venv/
 *.env
 redbook-output/
