@@ -97,14 +97,30 @@ subtitle: "对着抄作业就好了，一起变高效"
 python scripts/render_xhs.py <markdown_file> [options]
 ```
 
-- 默认输出目录为当前工作目录
-- 生成的图片包括：封面（cover.png）和正文卡片（card_1.png, card_2.png, ...）
+#### 输出目录结构
+
+- **默认输出目录**: `redbook-output/{MM-DD}/`（根据当前日期自动创建）
+- **生成的文件**:
+  - `content_{原文件名}.md` - 复制的源 Markdown 文件
+  - `cover.png` - 封面图片
+  - `card_1.png`, `card_2.png`, ... - 正文卡片图片
+
+**示例输出结构**:
+```
+redbook-output/
+└── 03-01/                      # 日期目录
+    ├── content_笔记.md          # 源文件备份
+    ├── cover.png               # 封面
+    ├── card_1.png              # 正文卡片1
+    ├── card_2.png              # 正文卡片2
+    └── card_3.png              # 正文卡片3
+```
 
 #### 渲染参数（Python）
 
 | 参数 | 简写 | 说明 | 默认值 |
 |---|---|---|---|
-| `--output-dir` | `-o` | 输出目录 | 当前工作目录 |
+| `--output-dir` | `-o` | 输出目录 | `redbook-output/{MM-DD}/` |
 | `--theme` | `-t` | 排版主题 | `default` |
 | `--mode` | `-m` | 分页模式 | `separator` |
 | `--width` | `-w` | 图片宽度 | `1080` |
@@ -133,7 +149,7 @@ python scripts/render_xhs.py <markdown_file> [options]
 #### 常用示例
 
 ```bash
-# 1) 默认主题 + 手动分隔分页
+# 1) 默认主题 + 手动分隔分页（输出到 redbook-output/{MM-DD}/）
 python scripts/render_xhs.py content.md -m separator
 
 # 2) 固定 1080x1440，自动缩放文字，尽量填满画面
@@ -147,6 +163,9 @@ python scripts/render_xhs.py content.md -m dynamic --max-height 4320
 
 # 5) 切换主题
 python scripts/render_xhs.py content.md -t playful-geometric -m auto-split
+
+# 6) 指定自定义输出目录
+python scripts/render_xhs.py content.md -o ./my-output-folder -m separator
 ```
 
 #### Node.js 渲染（可选）
@@ -205,8 +224,8 @@ XHS_COOKIE=your_cookie_string_here
 
 ## 注意事项
 
-1. Markdown 文件应保存在工作目录，渲染后的图片也保存在工作目录
-2. 技能目录 (`md2Redbook/`) 仅存放脚本和模板，不存放用户数据
+1. 渲染后的图片默认保存到 `redbook-output/{MM-DD}/` 目录，同时会复制源 Markdown 文件到该目录
+2. 技能目录仅存放脚本和模板，不存放用户数据
 3. 图片尺寸会根据内容自动调整，但保持 3:4 比例
 4. Cookie 有有效期限制，过期后需要重新获取
 5. 发布功能依赖 xhs 库，需要安装：`pip install xhs`

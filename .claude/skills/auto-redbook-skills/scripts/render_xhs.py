@@ -31,6 +31,8 @@ import os
 import re
 import sys
 import tempfile
+import shutil
+from datetime import datetime
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 
@@ -48,6 +50,9 @@ except ImportError as e:
 SCRIPT_DIR = Path(__file__).parent.parent
 ASSETS_DIR = SCRIPT_DIR / "assets"
 THEMES_DIR = ASSETS_DIR / "themes"
+
+# 获取项目根目录（脚本的上三级目录）
+PROJECT_ROOT = Path(__file__).parent.parent.parent.parent.parent
 
 # 默认卡片尺寸配置 (3:4 比例)
 DEFAULT_WIDTH = 1080
@@ -630,6 +635,30 @@ async def render_markdown_to_cards(md_file: str, output_dir: str,
     return total_cards
 
 
+def get_default_output_dir():
+    """获取默认输出目录：项目根目录/redbook-output/{日期}/"""
+    today = datetime.now().strftime('%m-%d')
+    base_dir = PROJECT_ROOT / 'redbook-output' / today
+    return str(base_dir)
+
+
+def copy_source_file(md_file: str, output_dir: str):
+    """将源 markdown 文件复制到输出目录"""
+    src_path = Path(md_file)
+    if not src_path.exists():
+        return
+
+    # 生成目标文件名: content_{原文件名}
+    dst_name = f"content_{src_path.name}"
+    dst_path = Path(output_dir) / dst_name
+
+    try:
+        shutil.copy2(src_path, dst_path)
+        print(f"  📄 已复制源文件: {dst_path}")
+    except Exception as e:
+        print(f"  ⚠️ 复制源文件失败: {e}")
+
+
 def main():
     parser = argparse.ArgumentParser(
         description='将 Markdown 文件渲染为小红书风格的图片卡片（支持多种样式和分页模式）',
@@ -650,6 +679,10 @@ def main():
   auto-fit    - 自动缩放文字以填满固定尺寸
   auto-split  - 根据内容高度自动切分
   dynamic     - 根据内容动态调整图片高度
+
+输出目录:
+  默认保存到 redbook-output/{MM-DD}/ 目录下
+  同时会复制源 markdown 文件到输出目录
 '''
     )
     parser.add_argument(
@@ -658,8 +691,8 @@ def main():
     )
     parser.add_argument(
         '--output-dir', '-o',
-        default=os.getcwd(),
-        help='输出目录（默认为当前工作目录）'
+        default=None,
+        help='输出目录（默认: redbook-output/{MM-DD}/）'
     )
     parser.add_argument(
         '--theme', '-t',
@@ -703,10 +736,22 @@ def main():
     if not os.path.exists(args.markdown_file):
         print(f"❌ 错误: 文件不存在 - {args.markdown_file}")
         sys.exit(1)
-    
+
+    # 确定输出目录
+    if args.output_dir is None:
+        output_dir = get_default_output_dir()
+    else:
+        output_dir = args.output_dir
+
+    # 确保输出目录存在
+    os.makedirs(output_dir, exist_ok=True)
+
+    # 复制源文件到输出目录
+    copy_source_file(args.markdown_file, output_dir)
+
     asyncio.run(render_markdown_to_cards(
         args.markdown_file,
-        args.output_dir,
+        output_dir,
         theme=args.theme,
         mode=args.mode,
         width=args.width,
