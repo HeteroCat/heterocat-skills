@@ -194,7 +194,20 @@ def save_image(image_data, output_path):
         return None
 
 
+def get_default_output_dir():
+    """获取默认输出目录（项目根目录下的 img 文件夹）"""
+    # 脚本路径: .claude/skills/nano-banana2/scripts/generate_image.py
+    # 项目根目录: ../../../..
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.abspath(os.path.join(script_dir, "../../../.."))
+    return os.path.join(project_root, "img")
+
+
 def main():
+    # 默认输出目录
+    default_output_dir = get_default_output_dir()
+    default_output_path = os.path.join(default_output_dir, "generated_image.png")
+
     parser = argparse.ArgumentParser(
         description="使用 OpenRouter 的 Google Gemini 模型生成/编辑图片",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -219,8 +232,8 @@ def main():
     )
     parser.add_argument(
         "--output", "-o",
-        help="输出文件路径（默认: generated_image.png）",
-        default="generated_image.png"
+        help=f"输出文件路径（默认: {default_output_path}）",
+        default=default_output_path
     )
     parser.add_argument(
         "--api-key",
