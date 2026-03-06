@@ -39,3 +39,5 @@ outputs/
 .vscode/
 *.swp
 *.swo
+juejin-auth.json
+skills-lock.json
