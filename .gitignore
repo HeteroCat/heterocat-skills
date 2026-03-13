@@ -33,7 +33,6 @@ img/
 *.env
 redbook-output/
 outputs/
-.claude/skills/auto-wechat
 # IDEs
 .idea/
 .vscode/
