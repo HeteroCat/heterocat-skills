@@ -1,7 +1,7 @@
 # HeteroCat Skills
 
-[![Skills](https://img.shields.io/badge/Skills-13+-blue)](.claude/skills)
-[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![Skills](https://img.shields.io/badge/Skills-27+-blue)](.claude/skills)
+[![License](https://img.shields.io/badge/License-Apache%202.0-green)](LICENSE)
 
 **HeteroCat Skills** 是一个 Claude Code 技能库，收录了一系列开箱即用的 Agent Skills，帮助 AI 智能体在内容创作、AI 绘图、科研检索、语音视频处理、数据可视化等场景下快速扩展能力。
 
@@ -24,6 +24,21 @@
 | 技能 | 描述 | 核心能力 |
 |------|------|----------|
 | **nano-banana2** | AI 图像生成与编辑 | 文生图、图生图、基于 OpenRouter 的 Gemini 图像模型、提示词优化指南 |
+| **article-illustrator** | 文章智能配图 | 分析文章结构、AI 生成插图、Type × Style 双维度配图策略 |
+
+### 金融投资
+
+| 技能 | 描述 | 核心能力 |
+|------|------|----------|
+| **fund-advisor** | 基金投资顾问 | 全平台持仓导入、组合分析、基金诊断、回测、资产配置方案 |
+| **fund-assistant** | 基金投资助手 | 实时估值查询、持仓管理、收益计算、大盘行情、北向资金 |
+| **fund-screener** | 基金量化筛选 | 夏普/索提诺/卡玛比率筛选、纯债/固收+/股票基金分类筛选 |
+| **fundamentals** | 股票基本面分析 | 财务数据获取、Piotroski F-Score 评分、价值股筛选 |
+| **mx-data** | 妙想金融数据 | 东方财富实时行情、财务数据、关联关系数据查询 |
+| **mx-search** | 妙想金融搜索 | 金融资讯智能筛选、新闻/公告/研报/政策检索 |
+| **mx-select-stock** | 妙想智能选股 | 基于指标选股、板块成分股筛选、股票推荐 |
+| **mx-selfselect** | 妙想自选股管理 | 自选股增删改查、行情监控 |
+| **mx-stock-simulator** | 股票模拟组合 | 模拟交易、持仓管理、资金查询、历史成交 |
 
 ### 开发工具
 
@@ -61,6 +76,9 @@ Claude 会自动识别你的需求并调用相应技能：
 "把这段采访音频转成字幕文件"
 "获取马斯克最近的推文"
 "帮我写一段治愈系音乐"
+"查询贵州茅台最新股价"
+"帮我分析我的基金持仓组合"
+"筛选夏普比率大于1的纯债基金"
 ```
 
 ### 方式二：手动执行脚本
@@ -94,6 +112,10 @@ python .claude/skills/nano-banana2/scripts/generate_image.py --image ./input.png
 | x-api (获取) | `X_BEARER_TOKEN` | 只读访问 Bearer Token |
 | x-api (发布) | `X_API_KEY`, `X_API_SECRET`, `X_ACCESS_TOKEN`, `X_ACCESS_TOKEN_SECRET` | OAuth 1.0a 四件套 |
 | auto-redbook-skills | `XHS_COOKIE`（可选） | 小红书 Cookie，用于自动发布 |
+| **mx-data/mx-search/mx-select-stock** | `MX_APIKEY` | 东方财富妙想平台 API Key |
+| **fund-advisor** | `QIEMAN_API_KEY` | 且慢 MCP 服务 API Key |
+| fund-assistant | - | 无需配置 |
+| fund-screener | - | 无需配置 |
 | arxiv | - | 无需配置 |
 | tech-news-daily | - | 无需配置 |
 
@@ -137,10 +159,21 @@ python package_zip.py
 ├── auto-redbook-skills/        # 小红书笔记创作
 ├── bar-chart-race-generator/   # 动态柱状图
 ├── find-skills/                # 技能发现
+├── fund-advisor/               # 基金投资顾问
+├── fund-assistant/             # 基金投资助手
+├── fund-screener/              # 基金量化筛选
+├── fundamentals/               # 股票基本面分析
 ├── generate-video/             # 豆包视频生成
 ├── mcp-builder/                # MCP 服务器开发
 ├── minimax/                    # MiniMax 语音/音乐
+├── mx-skills/                  # 东方财富妙想系列
+│   ├── mx-data/                # 金融数据查询
+│   ├── mx-search/              # 金融资讯搜索
+│   ├── mx-select-stock/        # 智能选股
+│   ├── mx-selfselect/          # 自选股管理
+│   └── mx-stock-simulator/     # 股票模拟交易
 ├── nano-banana2/               # AI 图像生成与编辑
+├── o-article-illustrator/      # 文章智能配图
 ├── remotion-best-practices/    # Remotion 视频开发
 ├── skill-creator/              # 技能创建指南
 ├── tech-news-daily/            # 每日科技新闻
@@ -191,7 +224,11 @@ python .claude/skills/skill-creator/scripts/package_skill.py .claude/skills/my-s
 
 ## 许可证
 
-[MIT](LICENSE)
+[Apache License 2.0](LICENSE)
+
+Copyright 2024 HeteroCat
+
+Licensed under the Apache License, Version 2.0.
 
 ---
 
