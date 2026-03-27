@@ -3,6 +3,7 @@
 打包所有 skills 为 .zip 文件
 """
 
+import shutil
 import sys
 import zipfile
 from pathlib import Path
@@ -45,6 +46,19 @@ def package_skill(skill_path, output_dir):
             # 遍历 skill 目录
             for file_path in skill_path.rglob('*'):
                 if file_path.is_file() and not file_path.name.startswith('.'):
+                    # 排除常见的不需要打包的目录
+                    relative_path = file_path.relative_to(skill_path)
+                    path_parts = relative_path.parts
+
+                    # 跳过虚拟环境和缓存目录
+                    skip_dirs = {'venv', '.venv', 'env', '__pycache__', 'node_modules', '.git', '.pytest_cache', 'dist', 'build'}
+                    if any(part in skip_dirs for part in path_parts):
+                        continue
+
+                    # 跳过 Python 编译文件
+                    if file_path.suffix in {'.pyc', '.pyo'}:
+                        continue
+
                     # 计算 zip 中的相对路径
                     arcname = file_path.relative_to(skill_path.parent)
                     zipf.write(file_path, arcname)
@@ -60,8 +74,14 @@ def package_skill(skill_path, output_dir):
 
 def main():
     # Skills 目录
-    skills_dir = Path("/Users/jason/Desktop/heterocat-skills/.claude/skills")
-    output_dir = Path("/Users/jason/Desktop/heterocat-skills/zip_dist")
+    skills_dir = Path("/Users/huayun/Desktop/heterocat-skills/.claude/skills")
+    output_dir = Path("/Users/huayun/Desktop/heterocat-skills/zip_dist")
+
+    # 清空输出目录
+    if output_dir.exists():
+        print(f"🗑️  清空输出目录: {output_dir}")
+        shutil.rmtree(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     print("📦 开始打包 skills 为 .zip 格式...\n")
 
