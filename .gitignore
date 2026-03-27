@@ -48,3 +48,4 @@ package-lock.json
 package.json
 
 .claude/settings.local.json
+.claude/skills/nano-banana-pro/
