@@ -1,0 +1,11 @@
+{
+  "owner": "aowind",
+  "slug": "sjht-doubao-image-gen",
+  "displayName": "sjht doubao text to image",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1773737477892,
+    "commit": "https://github.com/openclaw/skills/commit/b94aa4bc29e4bab917df4c43f9d8220341e5075b"
+  },
+  "history": []
+}
